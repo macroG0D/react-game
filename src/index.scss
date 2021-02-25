@@ -1,0 +1,16 @@
+@import './styles/vars.scss';
+@import './styles/mixins.scss';
+
+html {
+  font-size: 10px;
+  @include mainFont;
+  color: $secondary-color;
+}
+
+body {
+  background: $accent-color;
+}
+
+h1 {
+  font-size: 3.6rem;
+}
