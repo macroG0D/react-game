@@ -16,9 +16,11 @@ export default class App extends Component {
       <Router>
         <div className="app">
           <Header />
-          <Route path="/" component={Main} exact/>
-          <Route path="/about" component={About} />
-          <Route path="/game" component={Game} />
+          <div className="container">
+            <Route path="/" component={Main} exact />
+            <Route path="/about" component={About} />
+            <Route path="/game" component={Game} />
+          </div>
           <Footer />
         </div>
       </Router>

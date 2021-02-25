@@ -1,22 +1,46 @@
 @import '../../styles/vars.scss';
 @import '../../styles/mixins.scss';
 
-.center-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: 15rem;
+.rules-text {
+  font-size: 2rem;
 }
 
-.main {
+.rules-text-wrapper {
+  margin-top: 3rem;
+}
+
+.videoPlayer {
+  border: none;
+}
+
+.about {
+  display: flex;
+  padding-top: 15rem;
+ }
+
+.left-half {
+  width: 50%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 80%;
+  flex-direction: column;
 }
 
-.subheader {
-  color: #FFFFFF;
-  opacity: 0.8;
+.right-half {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 50%;
+}
+
+.descr-wrapper {
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.descr-bold {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.descr-regular {
+  font-size: 1.2rem;
 }
