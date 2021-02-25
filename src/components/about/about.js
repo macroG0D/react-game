@@ -41,22 +41,24 @@ export default class Main extends Component {
     const rules = this.renderRules();
 
     return (
-      <div className="about">
-        <div className="left-half">
-          <h2>{about}</h2>
-          <div className="rules-text-wrapper">{rules}</div>
-        </div>
-        <div className="right-half">
-          <iframe
-            className="videoPlayer"
-            title="game rules by Sheldon"
-            width={frameWidth}
-            height={frameHeight}
-            src={videoLink}
-          ></iframe>
-          <div className="descr-wrapper">
-            <p className="descr-bold">Rock Paper Scissors Lizard Spock</p>
-            <p className="descr-regular">The Big Bang Theory</p>
+      <div className="container">
+        <div className="about">
+          <div className="left-half">
+            <h2>{about}</h2>
+            <div className="rules-text-wrapper">{rules}</div>
+          </div>
+          <div className="right-half">
+            <iframe
+              className="videoPlayer"
+              title="game rules by Sheldon"
+              width={frameWidth}
+              height={frameHeight}
+              src={videoLink}
+            ></iframe>
+            <div className="descr-wrapper">
+              <p className="descr-bold">Rock Paper Scissors Lizard Spock</p>
+              <p className="descr-regular">The Big Bang Theory</p>
+            </div>
           </div>
         </div>
       </div>

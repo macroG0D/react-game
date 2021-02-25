@@ -10,11 +10,16 @@ export default class Main extends Component {
       'an online game that may help solve disputes or take decisions';
     const btnLabel = 'Play';
     return (
-      <div className="main">
-        <div className="center-content">
-          <h1>{mainHeader}</h1>
-          <span className="subheader">{subheader}</span>
-          <Link to="game"> <button className="btn-main">{btnLabel}</button></Link>
+      <div className="container">
+        <div className="main">
+          <div className="center-content">
+            <h1>{mainHeader}</h1>
+            <span className="subheader">{subheader}</span>
+            <Link to="game">
+              {' '}
+              <button className="btn-main">{btnLabel}</button>
+            </Link>
+          </div>
         </div>
       </div>
     );

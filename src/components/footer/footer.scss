@@ -4,7 +4,7 @@
 .footer {
   font-size: 1.4rem;
   @include flexContainer;
-  height: 9.6rem;
+  min-height: 9rem;
   background: $secondary-color;
   color: $accent-color;
   padding: 0 2rem;

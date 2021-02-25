@@ -9,16 +9,16 @@ export default class Game extends Component {
     height: 600,
   };
 
-  calculateCanvasSize = (width) => {
+  calculateNewCanvasSize = (width) => {
     return Math.floor(width / 1.777);
   };
 
-  checkWindowSize = () => {
+  updateCanvasSize = () => {
     let newWidth = window.innerWidth - MARGIN;
-    let newHeight = this.calculateCanvasSize(newWidth);
+    let newHeight = this.calculateNewCanvasSize(newWidth);
     while (newHeight > window.innerHeight - SAFEZONE) {
       newWidth -= 10;
-      newHeight = this.calculateCanvasSize(newWidth);
+      newHeight = this.calculateNewCanvasSize(newWidth);
     }
     this.setState({
       width: newWidth,
@@ -27,8 +27,8 @@ export default class Game extends Component {
   };
 
   componentDidMount() {
-    this.checkWindowSize();
-    window.addEventListener('resize', () => this.checkWindowSize());
+    this.updateCanvasSize();
+    window.addEventListener('resize', () => this.updateCanvasSize());
   }
 
   render() {
