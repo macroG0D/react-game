@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Header from '../header';
+import Footer from '../footer';
+import Main from '../main';
+import About from '../about';
+import Game from '../game';
 
 import './app.scss';
 
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="app">
-      <h1> React game init </h1>
-      <Header />
-    </div>
-  );
+export default class App extends Component {
+  render() {
+    return (
+      <Router>
+        <div className="app">
+          <Header />
+          <Route path="/" component={Main} exact={true}/>
+          <Route path="/about" component={About} />
+          <Route path="/game" component={Game} />
+          <Footer />
+        </div>
+      </Router>
+    );
+  }
 }
-
-export default App;

@@ -1,16 +1,43 @@
 @import './styles/vars.scss';
 @import './styles/mixins.scss';
+@import '../node_modules/normalize-scss/sass/normalize/import-now';
 
 html {
   font-size: 10px;
   @include mainFont;
   color: $secondary-color;
+  @include mt();
 }
 
 body {
   background: $accent-color;
+  font-size: 1.6rem;
 }
 
 h1 {
+  margin: 0;
   font-size: 3.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+a {
+  color: $secondary-color;
+  text-decoration: none;
+}
+
+.btn-main {
+  padding: 1rem;
+  letter-spacing: 0.05em;
+  font-size: 1.4rem;
+  border-radius: 3rem;
+  font-weight: 700;
+  width: 15rem;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    @include mt();
+    opacity: 0.8;
+  }
 }

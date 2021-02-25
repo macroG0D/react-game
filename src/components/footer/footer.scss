@@ -1,0 +1,31 @@
+@import '../../styles/vars.scss';
+@import '../../styles/mixins.scss';
+
+.footer {
+  font-size: 1.4rem;
+  @include flexContainer;
+  height: 9.6rem;
+  background: $secondary-color;
+  color: $accent-color;
+  padding: 0 2rem;
+  a {
+    color: $accent-color;
+    font-weight: 500;
+    text-decoration: underline;
+    margin: 0 0 0 0.3rem;
+  }
+  &__info {
+    width: 20%;
+    min-width: 20rem;
+  }
+  :last-child {
+    text-align: right;
+  }
+}
+
+.logo-secondary {
+  @include flexContainer;
+  :last-child {
+    margin: 0 0.5rem;
+  }
+}

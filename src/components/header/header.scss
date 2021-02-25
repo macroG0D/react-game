@@ -1,6 +1,22 @@
 @import '../../styles/vars.scss';
 @import '../../styles/mixins.scss';
 
-.app {
-  // color: $secondary-color;
+.header {
+  padding: 0 2rem;
+  height: 6.4rem;
+  font-size: 1.6rem;
+  @include flexContainer;
+}
+
+.nav-menu {
+  @include flexContainer;
+}
+
+.list-item {
+  list-style-type: none;
+  margin: 0 0 0 3rem;
+  &:hover {
+    opacity: 0.6;
+    @include mt();
+  }
 }
