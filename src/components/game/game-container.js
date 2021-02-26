@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { SAFEZONE } from '../../static/constans';
+import MainMenu from './scenes/main-menu';
 
 import './game-container.scss'
 
@@ -30,7 +31,9 @@ export default class GameBoard extends Component {
 
   createGameContainer = () => {
     const { width, height } = this.state;
-    return <div className="gameContainer" style={{height:`${height}px`, width:`${width}px`}}></div>
+    return <div className="gameContainer" style={{height:`${height}px`, width:`${width}px`}}>
+      <MainMenu /> 
+    </div>
   }
 
   componentDidMount() {
