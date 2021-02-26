@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { SAFEZONE } from '../../static/constans';
 import MainMenu from './scenes/main-menu';
+import GameMatch from './scenes/game-match';
 
-import './game-container.scss'
+import './game-container.scss';
 
-export default class GameBoard extends Component {
-
+export default class GameContainer extends Component {
   state = {
     width: 984,
     height: 600,
@@ -28,13 +28,18 @@ export default class GameBoard extends Component {
     });
   };
 
-
   createGameContainer = () => {
     const { width, height } = this.state;
-    return <div className="gameContainer" style={{height:`${height}px`, width:`${width}px`}}>
-      <MainMenu /> 
-    </div>
-  }
+    return (
+      <div
+        className="gameContainer"
+        style={{ height: `${height}px`, width: `${width}px` }}
+      >
+        {/* <MainMenu /> */}
+        <GameMatch />
+      </div>
+    );
+  };
 
   componentDidMount() {
     this.updateCanvasSize();
@@ -45,10 +50,6 @@ export default class GameBoard extends Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        {this.createGameContainer()}
-      </React.Fragment>
-    )
+    return <React.Fragment>{this.createGameContainer()}</React.Fragment>;
   }
 }
