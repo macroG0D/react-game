@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SAFEZONE, MARGIN, DARKER_BLUE } from '../../static/constans';
+import { SAFEZONE, MARGIN } from '../../static/constans';
 
 import './play.scss';
 
@@ -33,8 +33,6 @@ export default class Play extends Component {
     const ctx = canvas.getContext('2d');
     canvas.width = width;
     canvas.height = height;
-    ctx.fillStyle = DARKER_BLUE;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
   componentDidMount() {

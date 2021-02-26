@@ -1,6 +1,4 @@
 const SAFEZONE = 200;
 const MARGIN = 40;
 
-const DARKER_BLUE = '#1E1B4E';
-
-export {SAFEZONE, MARGIN, DARKER_BLUE};
+export { SAFEZONE, MARGIN };
