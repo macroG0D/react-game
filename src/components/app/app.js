@@ -4,7 +4,7 @@ import Header from '../header';
 import Footer from '../footer';
 import Main from '../main';
 import About from '../about';
-import Game from '../game';
+import Play from '../play';
 
 import './app.scss';
 
@@ -18,7 +18,7 @@ export default class App extends Component {
           <Header />
           <Route path="/" component={Main} exact />
           <Route path="/about" component={About} />
-          <Route path="/game" component={Game} />
+          <Route path="/play" component={Play} />
           <Footer />
         </div>
       </Router>

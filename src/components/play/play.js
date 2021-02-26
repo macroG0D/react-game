@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { SAFEZONE, MARGIN, DARKER_BLUE } from '../../static/constans';
 
-import './game.scss';
+import './play.scss';
 
-export default class Game extends Component {
+export default class Play extends Component {
 
   state = {
     width: 984,
@@ -47,7 +47,7 @@ export default class Game extends Component {
 
   render() {
     return (
-      <div className="game">
+      <div className="play">
         <canvas
           id="canvas"
         ></canvas>

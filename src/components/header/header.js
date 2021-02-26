@@ -16,7 +16,7 @@ export default class Header extends Component {
             <Link to="about">about</Link>
           </li>
           <li className="list-item">
-            <Link to="game">game</Link>
+            <Link to="play">play</Link>
           </li>
         </ul>
       </div>
