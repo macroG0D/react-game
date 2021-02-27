@@ -6,30 +6,43 @@ import GameMatch from './scenes/game-match';
 import './game-container.scss';
 
 export default class GameContainer extends Component {
-  state = {
-    width: 984,
-    height: 600,
-  };
+
+  constructor(){
+    super();
+    this.width = 984;
+    this.height = 600;
+  }
+
+  // state = {
+  //   width: 984,
+  //   height: 600,
+  // };
 
   calculateNewCanvasSize = (width) => {
     return Math.floor(width / 1.777);
   };
 
-  updateCanvasSize = () => {
+  calculateCanvasSize = () => {
     let newWidth = window.innerWidth;
     let newHeight = this.calculateNewCanvasSize(newWidth);
     while (newHeight > window.innerHeight - SAFEZONE) {
       newWidth -= 10;
       newHeight = this.calculateNewCanvasSize(newWidth);
     }
-    this.setState({
-      width: newWidth,
-      height: newHeight,
-    });
+    this.width = newWidth;
+    this.height = newHeight;
   };
 
+  updateCanvasSize = ({width, height} = this) => {
+    this.calculateCanvasSize();
+    const gameContainer = document.querySelector('.gameContainer');
+    gameContainer.style.width = `${width}px`;
+    gameContainer.style.height = `${height}px`;
+  }
+
   createGameContainer = () => {
-    const { width, height } = this.state;
+    this.calculateCanvasSize();
+    const { width, height } = this;
     return (
       <div
         className="gameContainer"
@@ -42,11 +55,7 @@ export default class GameContainer extends Component {
   };
 
   componentDidMount() {
-    this.updateCanvasSize();
     window.addEventListener('resize', () => this.updateCanvasSize());
-  }
-  componentDidUpdate() {
-    this.createGameContainer();
   }
 
   render() {
