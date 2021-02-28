@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
-import { SAFEZONE } from '../../static/constans';
+import { SAFEZONE } from '../../static/global';
 import MainMenu from './scenes/main-menu';
 import GameMatch from './scenes/game-match';
+
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import './game-container.scss';
 
 export default class GameContainer extends Component {
-
-  constructor(){
+  constructor() {
     super();
     this.width = 984;
     this.height = 600;
   }
-
-  // state = {
-  //   width: 984,
-  //   height: 600,
-  // };
 
   calculateNewCanvasSize = (width) => {
     return Math.floor(width / 1.777);
@@ -33,12 +29,13 @@ export default class GameContainer extends Component {
     this.height = newHeight;
   };
 
-  updateCanvasSize = ({width, height} = this) => {
+  updateCanvasSize = () => {
     this.calculateCanvasSize();
+    const { width, height } = this;
     const gameContainer = document.querySelector('.gameContainer');
     gameContainer.style.width = `${width}px`;
     gameContainer.style.height = `${height}px`;
-  }
+  };
 
   createGameContainer = () => {
     this.calculateCanvasSize();
@@ -48,8 +45,15 @@ export default class GameContainer extends Component {
         className="gameContainer"
         style={{ height: `${height}px`, width: `${width}px` }}
       >
-        {/* <MainMenu /> */}
-        <GameMatch />
+        <Router>
+          <Route path="/play" component={MainMenu} exact />
+          {/* <Route path="/play/newGame" component={GameMatch} exact /> */}
+          <Route
+            path="/play/newGame"
+            render={() => <GameMatch currentPlayerName="TonYem" />}
+            exact
+          />
+        </Router>
       </div>
     );
   };

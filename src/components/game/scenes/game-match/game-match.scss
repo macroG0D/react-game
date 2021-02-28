@@ -20,6 +20,13 @@
   }
 }
 
+.current-player-label-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+}
+
 .playerWeapons-wrapper {
   width: 80%;
   margin: 0 auto;
@@ -65,4 +72,29 @@
 .diactivate {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.opponents {
+  display: flex;
+  width: 80%;
+  height: 100%;
+}
+
+.opponent-card {
+  text-align: center;
+  text-transform: uppercase;
+  height: 20%;
+  width: 13%;
+  margin: 1.5rem auto 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  &__image {
+    margin: 1rem 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    border-radius: 100px;
+    background: $accent-color;
+  }
 }
