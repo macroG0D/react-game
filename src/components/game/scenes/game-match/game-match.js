@@ -36,7 +36,8 @@ export default class GameMatch extends Component {
   newGame = () => {
     const { status } = this;
     this.setCurrentPlayerName();
-    if (!status.isStarted) { // if started === true check in LS
+    if (!status.isStarted) {
+      // if started === true check in LS
       this.isStarted = true;
       this.createPlayers();
     }
@@ -78,7 +79,7 @@ export default class GameMatch extends Component {
     });
   };
 
-  oponentCard = ({ name, pic }) => {
+  opponentCard = ({ name, pic }) => {
     return (
       <div key={name} className="opponent-card">
         <h3>{name}</h3>
@@ -126,8 +127,10 @@ export default class GameMatch extends Component {
   checkSetResults = () => {
     console.log('results:');
     console.log(this.players);
+
     const activePlayers = this.players.filter((player) => !player.isDead);
     activePlayers.forEach((player, i) => {
+      console.log('player: ', player);
       if (!player.didLastMove) {
         player.isDead = true;
         return;
@@ -136,14 +139,16 @@ export default class GameMatch extends Component {
       const weaknesses = movesHistory[movesHistory.length - 1].weaknesses;
       activePlayers.forEach((otherplayer, j) => {
         if (i === j) return; // prevent selfcheck
-        if (!otherplayer.didLastMove) return;
+        if (!otherplayer.didLastMove) return; // prevent check defaulty-defeated afk player
         const opponentAttackWith =
           otherplayer.movesHistory[otherplayer.movesHistory.length - 1].title;
         if (weaknesses.indexOf(opponentAttackWith) !== -1) {
           player.isDead = true;
         }
       });
+      if (!player.isCurrentPlayer) this.showNPClastMove(player, i);
     });
+
     activePlayers.forEach((player) => {
       console.log(
         player.name,
@@ -154,6 +159,49 @@ export default class GameMatch extends Component {
         console.log(player.name, ' is defeated!');
       }
     });
+    const stillAlive = activePlayers.filter((player) => {
+      return !player.isDead ? player : false;
+    });
+
+    console.log('stayed in game: ', stillAlive.length, stillAlive);
+    this.roundResult(stillAlive);
+  };
+
+  roundResult = (stillAlive) => {
+    if (stillAlive.length === 0) {
+      // if no survivals
+      this.setState({
+        lastRoundResults: 'Every body is dead, start over',
+      });
+      this.players.forEach((player) => {
+        if (player.didLastMove) {
+          player.didLastMove = false;
+          player.isDead = false;
+        }
+      });
+      this.startNewSet();
+    } else if (stillAlive.length > 1) {
+      this.setState({
+        lastRoundResults: 'No winner yet, start over',
+      });
+      stillAlive.forEach((player) => {
+        player.didLastMove = false;
+      });
+      this.startNewSet();
+    } else {
+      this.setState({
+        lastRoundResults: `${stillAlive[0].name} is won!`,
+      });
+    }
+  };
+
+  showNPClastMove = ({ movesHistory, isDead }, i) => {
+    const opponentsCards = document.querySelectorAll('.opponent-card__image');
+    const lastMove = movesHistory[movesHistory.length - 1];
+    opponentsCards[i].src = getWeaponImage(lastMove);
+    if (isDead) {
+      opponentsCards[i].parentElement.classList.add('death-cross');
+    }
   };
 
   setCurrentPlayerOnTable = () => {
@@ -172,7 +220,7 @@ export default class GameMatch extends Component {
       if (player.isCurrentPlayer) return false;
       if (!player.pic) player.pic = profileDefaultPic;
       this.activePlayers += 1;
-      return this.oponentCard(player);
+      return this.opponentCard(player);
     });
   };
 
@@ -246,9 +294,9 @@ export default class GameMatch extends Component {
   };
 
   countDownLabel = () => {
-    const { countdown } = this.state;
+    const { countdown, lastRoundResults } = this.state;
     if (!isNaN(countdown) && countdown > 0) return countdown;
-    if (countdown === 0) return 'Results';
+    if (countdown === 0) return lastRoundResults;
     return 'Prepare';
   };
 

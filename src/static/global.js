@@ -72,15 +72,15 @@ export const usersDB = [
     pic: undefined,
   },
   {
-    name: 'Kutrapali',
+    name: 'Koothrappali',
     pic: undefined,
   },
   {
-    name: 'Hovard',
+    name: 'Howard',
     pic: undefined,
   },
   {
-    name: 'Peni',
+    name: 'Penny',
     pic: undefined,
   },
 ];
