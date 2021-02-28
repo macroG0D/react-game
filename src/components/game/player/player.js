@@ -8,11 +8,13 @@ export default class Player {
     this.isCurrentPlayer = isCurrentPlayer;
     this.isDead = false;
     this.movesHistory = [];
+    this.didLastMove = false;
   }
 
   autoMove = () => {
     const randomPick = Math.floor(Math.random() * 5);
-    return WEAPONS[randomPick];
+    this.didLastMove = true;
+    this.updateHistory(WEAPONS[randomPick]);
   };
 
   updateName = () => {};
