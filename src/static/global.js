@@ -40,4 +40,49 @@ export const WEAPONS = [
   },
 ];
 
+export const getWeaponImage = (move) => {
+  const { title } = move;
+
+  if (title === 'rock') {
+    return Rock;
+  }
+  if (title === 'scissors') {
+    return Scissors;
+  }
+  if (title === 'paper') {
+    return Paper;
+  }
+  if (title === 'lizard') {
+    return Lizard;
+  }
+  if (title === 'spock') {
+    return Spock;
+  } else {
+    return undefined;
+  }
+};
+
+export const usersDB = [
+  {
+    name: 'Sheldon',
+    pic: undefined,
+  },
+  {
+    name: 'Leonard',
+    pic: undefined,
+  },
+  {
+    name: 'Kutrapali',
+    pic: undefined,
+  },
+  {
+    name: 'Hovard',
+    pic: undefined,
+  },
+  {
+    name: 'Peni',
+    pic: undefined,
+  },
+];
+
 export const WEAPONSIMAGES = {Rock, Scissors, Paper, Lizard, Spock}
