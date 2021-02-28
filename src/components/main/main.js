@@ -14,7 +14,7 @@ export default class Main extends Component {
           <div className="center-content">
             <h1>{mainHeader}</h1>
             <span className="subheader">{subheader}</span>
-            <Link to="game">
+            <Link to="play">
               <button className="btn-main">{btnLabel}</button>
             </Link>
           </div>
