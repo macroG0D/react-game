@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
-import { WEAPONSIMAGES } from '../../../../static/global';
-import Player from '../../player/player';
-import { WEAPONS } from '../../../../static/global';
 
-import profilePic from '../../../../assets/ingame-assets/profile-pic.svg';
+import Player from '../../player/player';
+
+import { WEAPONS, getWeaponImage, usersDB } from '../../../../static/global';
+
+import profileDefaultPic from '../../../../assets/ingame-assets/profile-pic.svg';
+
 import './game-match.scss';
 
-const { Rock, Scissors, Paper, Lizard, Spock } = WEAPONSIMAGES;
 export default class GameMatch extends Component {
   constructor() {
     super();
-    this.isGameActive = false;
+    this.totalPlayers = 3;
+    this.realPlayersCount = 1;
+    this.status = {
+      isStarted: false,
+      isFinished: false,
+    };
     this.players = [];
     this.activePlayers = 0;
   }
 
   state = {
-    currentPlayerName: '',
+    currentPlayerName: null,
+    countdown: null,
+    counter: null,
   };
 
   setCurrentPlayerName = () => {
@@ -26,155 +34,58 @@ export default class GameMatch extends Component {
   };
 
   newGame = () => {
-    if (!this.isGameActive) {
+    const { status } = this;
+    this.setCurrentPlayerName();
+    if (!status.isStarted) { // if started === true check in LS
+      this.isStarted = true;
       this.createPlayers();
-      this.isGameActive = true;
     }
-    return this.setPlayers();
+    return this.updateGameTable();
   };
 
-  createPlayers = () => {
-    this.usersList.push({
+  generateUsersList = (totalPlayersCount) => {
+    const usedIndexes = [];
+    const usersList = [];
+    for (let i = 0; i < totalPlayersCount - this.realPlayersCount; i += 1) {
+      const randomUserIndex = Math.floor(Math.random() * usersDB.length);
+      if (usedIndexes.indexOf(randomUserIndex) === -1) {
+        usedIndexes.push(randomUserIndex);
+        usersList.push(usersDB[randomUserIndex]);
+      } else {
+        i -= 1;
+      }
+      usersList[i].isNPC = true;
+      usersList[i].isCurrentPlayer = false;
+    }
+    usersList.push(this.currentPlayerObject());
+    return usersList;
+  };
+
+  currentPlayerObject = () => {
+    return {
       name: this.props.currentPlayerName,
       pic: undefined,
       isNPC: false,
       isCurrentPlayer: true,
-    });
-    this.usersList.forEach((user) => {
+    };
+  };
+
+  createPlayers = () => {
+    const usersList = this.generateUsersList(this.totalPlayers);
+    usersList.forEach((user) => {
       const { name, pic, isNPC, isCurrentPlayer } = user;
       this.players.push(new Player(name, pic, isNPC, isCurrentPlayer));
     });
   };
 
-  setPlayers = () => {
-    return this.players.map((player) => {
-      if (player.isCurrentPlayer) return false;
-      if (!player.pic) player.pic = profilePic;
-      this.activePlayers += 1;
-      return (
-        <div key={player.name} className="opponent-card">
-          <h3>{player.name}</h3>
-          <img
-            className="opponent-card__image"
-            src={player.pic}
-            alt="opponent"
-          ></img>
-          <div className="moves-history">{this.updatePlayerMoves()}</div>
-        </div>
-      );
-    });
-  };
-
-  checkMoveResults = () => {
-    this.players.forEach((player, i) => {
-      if (player.isDead) return; // здесь есть проблема — здесь мы упускаем вариант когда за один ход игрок проиграл но и унес кого-то с собой
-      if (this.activePlayers === 1) return;
-      const { movesHistory } = player;
-      const weaknesses = movesHistory[movesHistory.length - 1].weaknesses;
-      this.players.forEach((otherplayer, j) => {
-        if (i === j) return; // prevent selfcheck
-        const opponentAttackWith =
-          otherplayer.movesHistory[otherplayer.movesHistory.length - 1].title;
-        console.log(otherplayer.movesHistory);
-        if (weaknesses.indexOf(opponentAttackWith) !== -1) {
-          console.log(`${player.name} defeated`);
-          // this.players[i] = null;
-          player.isDead = true; // и от сюда та проблема возникает — из за того, что здесь мы говорим что игрок мертв
-          this.activePlayers = this.checkActivePlayersCount();
-        }
-      });
-    });
-  };
-
-  checkActivePlayersCount = () => {
-    let activePlayrs = 0;
-    this.players.forEach((player) => {
-      if (!player.isDead) activePlayrs += 1;
-    });
-    return activePlayrs;
-  };
-
-  getMovementImage = (move) => {
-    const { title } = move;
-
-    if (title === 'rock') {
-      return Rock;
-    }
-    if (title === 'scissors') {
-      return Scissors;
-    }
-    if (title === 'paper') {
-      return Paper;
-    }
-    if (title === 'lizard') {
-      return Lizard;
-    }
-    if (title === 'spock') {
-      return Spock;
-    } else {
-      return undefined;
-    }
-  };
-
-  playMove = (currentPlayerMove) => {
-    const opponentsCards = document.querySelectorAll('.opponent-card__image');
-    if (this.activePlayers === 1) return;
-    this.players.forEach((player, i) => {
-      if (player.isCurrentPlayer) {
-        const currentPlayerWeapon = WEAPONS.findIndex((weapon) => weapon.title === currentPlayerMove)
-        player.updateHistory(WEAPONS[currentPlayerWeapon])
-      } else {
-        if (player.isDead) return;
-        if (player.isCurrentPlayer) return;
-        player.updateHistory(player.autoMove());
-        const { movesHistory } = player;
-        const lastMove = movesHistory[movesHistory.length - 1];
-        opponentsCards[i].src = this.getMovementImage(lastMove);
-      }
-
-    });
-    this.checkMoveResults();
-  };
-
-  updatePlayerMoves = () => {
-    let result;
-    this.players.forEach((player) => {
-      const { movesHistory } = player;
-      result = movesHistory.map((playerMove) => {
-        return (
-          <img
-            className="player-move"
-            src={() => this.getMovementImage(playerMove.title)}
-            alt={playerMove.title}
-          ></img>
-        );
-      });
-    });
-    return result;
-  };
-
-  usersList = [
-    {
-      name: 'bobo',
-      pic: undefined,
-      isNPC: true,
-      isCurrentPlayer: false,
-    },
-    {
-      name: 'sheldon',
-      pic: undefined,
-      isNPC: true,
-      isCurrentPlayer: false,
-    },
-  ];
-
-  attack = (title, key) => {
-    const playeroptions = document.querySelectorAll('.weapon-card');
-    playeroptions.forEach((el) => {
-      if (el.title !== title) {
-        el.classList.add('diactivate');
-      }
-    });
+  oponentCard = ({ name, pic }) => {
+    return (
+      <div key={name} className="opponent-card">
+        <h3>{name}</h3>
+        <img className="opponent-card__image" src={pic} alt="opponent"></img>
+        {/* <div className="moves-history">{this.updatePlayerMoves()}</div> */}
+      </div>
+    );
   };
 
   setPlayerWeapons = () => {
@@ -184,8 +95,7 @@ export default class GameMatch extends Component {
         <div key={title} title={title} className="weapon-card">
           <img
             className="weapon-card__image"
-            // onClick={() => this.attack(title, key)}
-            onClick={() => this.playMove(title)}
+            onClick={() => this.playerMakeMove(title)}
             src={image}
             alt={title}
           ></img>
@@ -195,7 +105,58 @@ export default class GameMatch extends Component {
     });
   };
 
-  setPlayerTable = () => {
+  playerMakeMove = (weaponTitle) => {
+    const usedWeapon = WEAPONS.find((weapon) => weapon.title === weaponTitle);
+    const currentPlayer = this.players.find((player) => player.isCurrentPlayer);
+    if (!currentPlayer.didLastMove && !currentPlayer.isDead) {
+      // cant make many moves in one turn
+      currentPlayer.didLastMove = true;
+      currentPlayer.updateHistory(usedWeapon);
+    }
+    return;
+  };
+
+  npcsMakeMove = () => {
+    const activeNPCplayers = this.players.filter(
+      (player) => !player.isDead && player.isNPC
+    );
+    activeNPCplayers.forEach((npc) => npc.autoMove());
+  };
+
+  checkSetResults = () => {
+    console.log('results:');
+    console.log(this.players);
+    const activePlayers = this.players.filter((player) => !player.isDead);
+    activePlayers.forEach((player, i) => {
+      if (!player.didLastMove) {
+        player.isDead = true;
+        return;
+      }
+      const { movesHistory } = player;
+      const weaknesses = movesHistory[movesHistory.length - 1].weaknesses;
+      activePlayers.forEach((otherplayer, j) => {
+        if (i === j) return; // prevent selfcheck
+        if (!otherplayer.didLastMove) return;
+        const opponentAttackWith =
+          otherplayer.movesHistory[otherplayer.movesHistory.length - 1].title;
+        if (weaknesses.indexOf(opponentAttackWith) !== -1) {
+          player.isDead = true;
+        }
+      });
+    });
+    activePlayers.forEach((player) => {
+      console.log(
+        player.name,
+        ' last move',
+        player.movesHistory[player.movesHistory.length - 1]
+      );
+      if (player.isDead) {
+        console.log(player.name, ' is defeated!');
+      }
+    });
+  };
+
+  setCurrentPlayerOnTable = () => {
     return (
       <div className="game-match__table">
         <div className="playerWeapons-wrapper">{this.setPlayerWeapons()}</div>
@@ -206,20 +167,104 @@ export default class GameMatch extends Component {
     );
   };
 
-  setOpponents = () => {
-    return this.newGame();
+  setOpponentsOnTable = () => {
+    return this.players.map((player) => {
+      if (player.isCurrentPlayer) return false;
+      if (!player.pic) player.pic = profileDefaultPic;
+      this.activePlayers += 1;
+      return this.oponentCard(player);
+    });
   };
+
+  updateGameTable = () => {};
 
   componentDidMount() {
     this.setCurrentPlayerName();
+    this.newGame();
+    this.startNewSet();
   }
 
+  startNewSet = () => {
+    this.npcsMakeMove();
+    this.wait(2000)
+      .then(() => {
+        this.setState({
+          countdown: 5,
+          counter: 0,
+        });
+        return this.wait();
+      })
+      .then(() => {
+        this.setState({
+          countdown: 4,
+          counter: 1,
+        });
+        return this.wait();
+      })
+      .then(() => {
+        this.setState({
+          countdown: 3,
+          counter: 2,
+        });
+        return this.wait();
+      })
+      .then(() => {
+        this.setState({
+          countdown: 2,
+          counter: 3,
+        });
+        return this.wait();
+      })
+      .then(() => {
+        this.setState({
+          countdown: 1,
+          counter: 4,
+        });
+        return this.wait();
+      })
+      .then(() => {
+        this.checkSetResults();
+        this.setState({
+          countdown: 0,
+          counter: '',
+        });
+      });
+  };
+
+  wait(ms = 500) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  counterWeaponsName = () => {
+    const { counter } = this.state;
+    if (typeof counter === 'number') {
+      return WEAPONS[counter].title;
+    }
+    return;
+  };
+
+  countDownLabel = () => {
+    const { countdown } = this.state;
+    if (!isNaN(countdown) && countdown > 0) return countdown;
+    if (countdown === 0) return 'Results';
+    return 'Prepare';
+  };
+
   render() {
-    // console.log(this.state.currentPlayerName);
     return (
       <div className="game-match">
-        <div className="opponents">{this.setOpponents()}</div>
-        {this.setPlayerTable()}
+        <div className="opponents">{this.setOpponentsOnTable()}</div>
+        <div className="countdown-wrapper">
+          <span className="countdown-wrapper__counter">
+            {this.countDownLabel()}
+          </span>
+          <div className="countdown-wrapper__text-label">
+            {this.counterWeaponsName()}
+          </div>
+        </div>
+        {this.setCurrentPlayerOnTable()}
       </div>
     );
   }

@@ -98,3 +98,19 @@
     background: $accent-color;
   }
 }
+
+.countdown-wrapper {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-100%);
+  text-align: center;
+  &__counter {
+    @include mainFont(400);
+    font-size: 10rem;
+  }
+  &__text-label {
+    @include mainFont(800);
+    text-transform: uppercase;
+    font-size: 1.8rem;
+  }
+}
