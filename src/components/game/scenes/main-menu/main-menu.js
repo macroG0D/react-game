@@ -6,7 +6,7 @@ import './main-menu.scss'
 export default class MainMenu extends Component {
 
   test = () => {
-    return console.log('test');
+    // return console.log('test');
   }
 
   render() {

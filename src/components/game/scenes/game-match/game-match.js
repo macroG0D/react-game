@@ -25,6 +25,7 @@ export default class GameMatch extends Component {
     currentPlayerName: null,
     countdown: null,
     counter: null,
+    defeatedPlayers: [],
   };
 
   setCurrentPlayerName = () => {
@@ -81,7 +82,7 @@ export default class GameMatch extends Component {
 
   opponentCard = ({ name, pic }) => {
     return (
-      <div key={name} className="opponent-card">
+      <div key={name} id={name} className="opponent-card">
         <h3>{name}</h3>
         <img className="opponent-card__image" src={pic} alt="opponent"></img>
         {/* <div className="moves-history">{this.updatePlayerMoves()}</div> */}
@@ -93,7 +94,7 @@ export default class GameMatch extends Component {
     return WEAPONS.map((weapon) => {
       const { title, image, key } = weapon;
       return (
-        <div key={title} title={title} className="weapon-card">
+        <div key={title} id={title} className="weapon-card">
           <img
             className="weapon-card__image"
             onClick={() => this.playerMakeMove(title)}
@@ -107,9 +108,15 @@ export default class GameMatch extends Component {
   };
 
   playerMakeMove = (weaponTitle) => {
+    const userCards = document.querySelectorAll('.weapon-card');
     const usedWeapon = WEAPONS.find((weapon) => weapon.title === weaponTitle);
     const currentPlayer = this.players.find((player) => player.isCurrentPlayer);
     if (!currentPlayer.didLastMove && !currentPlayer.isDead) {
+      userCards.forEach((userCard) => {
+        if (userCard.id !== weaponTitle) {
+          userCard.classList.add('not-active');
+        }
+      });
       // cant make many moves in one turn
       currentPlayer.didLastMove = true;
       currentPlayer.updateHistory(usedWeapon);
@@ -125,12 +132,10 @@ export default class GameMatch extends Component {
   };
 
   checkSetResults = () => {
-    console.log('results:');
-    console.log(this.players);
+    const newDefeatedPlayers = [];
 
     const activePlayers = this.players.filter((player) => !player.isDead);
     activePlayers.forEach((player, i) => {
-      console.log('player: ', player);
       if (!player.didLastMove) {
         player.isDead = true;
         return;
@@ -148,26 +153,18 @@ export default class GameMatch extends Component {
       });
       if (!player.isCurrentPlayer) this.showNPClastMove(player, i);
     });
-
     activePlayers.forEach((player) => {
-      console.log(
-        player.name,
-        ' last move',
-        player.movesHistory[player.movesHistory.length - 1]
-      );
       if (player.isDead) {
-        console.log(player.name, ' is defeated!');
+        newDefeatedPlayers.push(player);
       }
     });
     const stillAlive = activePlayers.filter((player) => {
       return !player.isDead ? player : false;
     });
-
-    console.log('stayed in game: ', stillAlive.length, stillAlive);
-    this.roundResult(stillAlive);
+    this.roundResult(stillAlive, newDefeatedPlayers);
   };
 
-  roundResult = (stillAlive) => {
+  roundResult = (stillAlive, newDefeatedPlayers) => {
     if (stillAlive.length === 0) {
       // if no survivals
       this.setState({
@@ -181,6 +178,7 @@ export default class GameMatch extends Component {
       });
       this.startNewSet();
     } else if (stillAlive.length > 1) {
+      this.updateDefeatedPlayersList(newDefeatedPlayers);
       this.setState({
         lastRoundResults: 'No winner yet, start over',
       });
@@ -189,19 +187,49 @@ export default class GameMatch extends Component {
       });
       this.startNewSet();
     } else {
+      this.updateDefeatedPlayersList(newDefeatedPlayers);
       this.setState({
         lastRoundResults: `${stillAlive[0].name} is won!`,
+        gameFinished: true,
       });
     }
+    if (!this.state.gameFinished) {
+      const userCards = document.querySelectorAll('.weapon-card');
+      userCards.forEach((userCard) => {
+        userCard.classList.remove('not-active');
+      });
+    }
+    this.checkAsDefeated();
   };
 
-  showNPClastMove = ({ movesHistory, isDead }, i) => {
+  updateDefeatedPlayersList = (newDefeatedPlayers) => {
+    const updatedDefeatedPlayers = [
+      ...this.state.defeatedPlayers,
+      ...newDefeatedPlayers,
+    ];
+    this.setState({
+      defeatedPlayers: updatedDefeatedPlayers,
+    });
+  };
+
+  checkAsDefeated = () => {
+    this.state.defeatedPlayers.forEach((defeatedPlayer) => {
+      if (defeatedPlayer.isCurrentPlayer) {
+        const currentPlayerTable = document.querySelector('.game-match__table');
+        if (!currentPlayerTable.classList.contains('not-active'))
+          currentPlayerTable.classList.add('not-active');
+      } else {
+        const lostNPCcard = document.getElementById(defeatedPlayer.name);
+        if (!lostNPCcard.classList.contains('not-active'))
+          lostNPCcard.classList.add('not-active');
+      }
+    });
+  };
+
+  showNPClastMove = ({ movesHistory }, i) => {
     const opponentsCards = document.querySelectorAll('.opponent-card__image');
     const lastMove = movesHistory[movesHistory.length - 1];
     opponentsCards[i].src = getWeaponImage(lastMove);
-    if (isDead) {
-      opponentsCards[i].parentElement.classList.add('death-cross');
-    }
   };
 
   setCurrentPlayerOnTable = () => {
