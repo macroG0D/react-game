@@ -9,19 +9,21 @@
   margin-top: 3rem;
 }
 
-.videoPlayer {
-  border: none;
-}
-
 .about {
   display: flex;
+  flex-wrap: wrap-reverse;
  }
 
 .left-half {
   width: 50%;
+  min-width: 30rem;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  margin: 0 auto;
+  h2 {
+    padding-right: 2rem;
+  }
 }
 
 .right-half {
@@ -29,17 +31,29 @@
   flex-direction: column;
   align-items: flex-end;
   width: 50%;
+  min-width: 30rem;
+  position: relative;
+  margin: 0 auto 3rem;
+}
+
+.videoPlayer {
+  border: none;
+  max-width: 100%;
 }
 
 .descr-wrapper {
   text-align: right;
   margin-top: 1rem;
+  &__descr-bold {
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+  &__descr-regular {
+    font-size: 1.2rem;
+  }
 }
 
-.descr-bold {
-  font-size: 1.2rem;
-  font-weight: 800;
-}
-.descr-regular {
-  font-size: 1.2rem;
+.game-rules-pic {
+  margin: 0;
+  align-self: flex-start;
 }

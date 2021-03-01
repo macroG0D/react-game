@@ -2,8 +2,8 @@
 @import '../../styles/mixins.scss';
 
 .header {
-  padding: 0 2rem;
-  height: 6.4rem;
+  padding: 0.2rem 2rem;
+  // min-height: 6.4rem;
   font-size: 1.6rem;
   @include flexContainer;
 }

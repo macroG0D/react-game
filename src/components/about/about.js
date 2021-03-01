@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import rulesPic from '../../assets/nongame-assets/rules.jpg';
+
 import './about.scss';
 
 export default class Main extends Component {
@@ -56,9 +58,10 @@ export default class Main extends Component {
               src={videoLink}
             ></iframe>
             <div className="descr-wrapper">
-              <p className="descr-bold">Rock Paper Scissors Lizard Spock</p>
-              <p className="descr-regular">The Big Bang Theory</p>
+              <p className="descr-wrapper__bold">Rock Paper Scissors Lizard Spock</p>
+              <p className="descr-wrapper__regular">The Big Bang Theory</p>
             </div>
+            <img className="game-rules-pic" src={rulesPic} alt="Game rules"></img>
           </div>
         </div>
       </div>
