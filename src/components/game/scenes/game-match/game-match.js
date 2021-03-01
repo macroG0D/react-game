@@ -11,7 +11,7 @@ import './game-match.scss';
 export default class GameMatch extends Component {
   constructor() {
     super();
-    this.totalPlayers = 3;
+    this.totalPlayers = 6;
     this.realPlayersCount = 1;
     this.status = {
       isStarted: false,
@@ -109,14 +109,15 @@ export default class GameMatch extends Component {
 
   playerMakeMove = (weaponTitle) => {
     const userCards = document.querySelectorAll('.weapon-card');
+    userCards.forEach((userCard) => {
+      if (userCard.id !== weaponTitle) {
+        userCard.classList.add('not-active');
+      }
+    });
     const usedWeapon = WEAPONS.find((weapon) => weapon.title === weaponTitle);
     const currentPlayer = this.players.find((player) => player.isCurrentPlayer);
     if (!currentPlayer.didLastMove && !currentPlayer.isDead) {
-      userCards.forEach((userCard) => {
-        if (userCard.id !== weaponTitle) {
-          userCard.classList.add('not-active');
-        }
-      });
+
       // cant make many moves in one turn
       currentPlayer.didLastMove = true;
       currentPlayer.updateHistory(usedWeapon);
