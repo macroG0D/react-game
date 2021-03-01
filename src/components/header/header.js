@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './header.scss';
 import { Link } from 'react-router-dom';
 
-import logo from '../../logo.svg';
+import logo from '../../assets/nongame-assets/logo.svg';
 
 export default class Header extends Component {
   render() {

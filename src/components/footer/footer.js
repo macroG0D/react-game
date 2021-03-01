@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './footer.scss';
 
-import rssLogo from '../../rss-logo.svg';
-import ydLogo from '../../yemDigital-logo.svg';
+import rssLogo from '../../assets/nongame-assets/rss-logo.svg';
+import ydLogo from '../../assets/nongame-assets/yemDigital-logo.svg';
 
 export default class Footer extends Component {
   render() {

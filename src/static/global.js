@@ -15,16 +15,16 @@ export const WEAPONS = [
     key: 'r',
   },
   {
-    title: 'scissors',
-    image: Scissors,
-    weaknesses: ['rock', 'spock'],
-    key: 's',
-  },
-  {
     title: 'paper',
     image: Paper,
     weaknesses: ['scissors', 'lizard'],
     key: 'p',
+  },
+  {
+    title: 'scissors',
+    image: Scissors,
+    weaknesses: ['rock', 'spock'],
+    key: 's',
   },
   {
     title: 'lizard',
