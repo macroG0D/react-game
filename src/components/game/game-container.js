@@ -48,7 +48,6 @@ export default class GameContainer extends Component {
       >
         <Router>
           <Route path="/play" component={MainMenu} exact />
-          {/* <Route path="/play/newGame" component={GameMatch} exact /> */}
           <Route
             path="/play/newGame"
             render={() => <GameMatch currentPlayerName="TonYem" />}
@@ -63,7 +62,9 @@ export default class GameContainer extends Component {
     window.addEventListener('resize', () => this.updateCanvasSize());
     GameSounds.backgroundMusic();
   }
-
+  componentWillUnmount() {
+  }
+  
   render() {
     return <React.Fragment>{this.createGameContainer()}</React.Fragment>;
   }

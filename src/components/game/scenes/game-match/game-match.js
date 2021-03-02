@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import Player from '../../player/player';
 import ShowMovesHistory from './showMovesHistory';
@@ -13,6 +14,7 @@ import './game-match.scss';
 export default class GameMatch extends Component {
   constructor() {
     super();
+    this.uniqeKey = 123;
     this.totalPlayers = 5;
     this.realPlayersCount = 1;
     this.status = {
@@ -41,6 +43,10 @@ export default class GameMatch extends Component {
   };
 
   newGame = () => {
+    const myStorage = window.localStorage;
+    myStorage.setItem('playername', this.currentPlayerName);
+    console.log(myStorage);
+
     const { status } = this;
     this.setCurrentPlayerName();
     if (!status.isStarted) {
@@ -345,10 +351,6 @@ export default class GameMatch extends Component {
     this.setCurrentPlayerName();
     this.newGame();
     this.startNewSet();
-    // const currentPlayerWeaponsCards = document.querySelectorAll('.weapon-card');
-    // currentPlayerWeaponsCards.forEach((weaponCard) => {
-
-    // })
     this.keyboardControl();
   }
 
@@ -462,9 +464,9 @@ export default class GameMatch extends Component {
     }
   };
 
-  restartGame = (e) => {
-    this.newGame();
-  };
+  restartGame = () => {};
+
+  componentWillUnmount() {}
 
   render() {
     return (
@@ -473,12 +475,14 @@ export default class GameMatch extends Component {
           <span className="round-number__label">round:</span>
           {this.state.round}
         </div>
-        <div
-          className="ingame-burger-wrapper"
-          onClick={() => console.log('game menu')}
-        >
-          <div className="ingame-burger"></div>
-        </div>
+        <Link to="/play">
+          <div
+            className="ingame-burger-wrapper"
+            onClick={() => console.log('game menu')}
+          >
+            <div className="ingame-burger"></div>
+          </div>
+        </Link>
         <div className="opponents">{this.setOpponentsOnTable()}</div>
         <div className="countdown-wrapper">
           <span className="countdown-wrapper__counter">
@@ -488,7 +492,7 @@ export default class GameMatch extends Component {
             {this.counterWeaponsName()}
           </div>
         </div>
-        <div className="btn btn__restart" onClick={(e) => this.restartGame(e)}>
+        <div className="btn btn__restart" onClick={this.restartGame}>
           restart
         </div>
         <div className="btn btn__autoplay" onClick={(e) => this.autoPlay(e)}>
