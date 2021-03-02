@@ -176,7 +176,6 @@ export default class GameMatch extends Component {
           player.isDead = true;
         }
       });
-      if (!player.isCurrentPlayer) this.showNPClastMove(player, i);
     });
     activePlayers.forEach((player) => {
       if (player.isDead) {
@@ -257,11 +256,29 @@ export default class GameMatch extends Component {
     });
   };
 
-  showNPClastMove = ({ movesHistory }, i) => {
+  updateNPCImage = (setDefaultPic) => {
     const opponentsCards = document.querySelectorAll('.opponent-card__image');
-    const lastMove = movesHistory[movesHistory.length - 1];
-    opponentsCards[i].src = getWeaponImage(lastMove);
+    if (opponentsCards.length === 0) return;
+    this.players.forEach((player, i) => {
+      if (!setDefaultPic) {
+        if (player.isCurrentPlayer) return;
+        opponentsCards[i].src = player.pic;
+      } else {
+        if (player.isCurrentPlayer || player.isDead) return;
+        const lastMove = player.movesHistory[player.movesHistory.length - 1];
+        opponentsCards[i].src = getWeaponImage(lastMove);
+      }     
+    })
   };
+
+  showNPCProfileImage = () => {
+    const opponentsCards = document.querySelectorAll('.opponent-card__image');
+    if (opponentsCards.length === 0) return;
+    this.players.forEach((player, i) => {
+      if (player.isCurrentPlayer) return;
+      opponentsCards[i].src = player.pic;
+    })
+  }
 
   setCurrentPlayerOnTable = () => {
     const { currentPlayerName } = this.state;
@@ -269,7 +286,7 @@ export default class GameMatch extends Component {
       <div className="game-match__table">
         <div className="playerWeapons-wrapper">{this.setPlayerWeapons()}</div>
         <div className="current-player-label-wrapper">
-          <h1>{currentPlayerName}</h1>
+          <h3 class="current-player-label-wrapper__title">{currentPlayerName}</h3>
           <div className="moves-history">
             <ShowMovesHistory
               playerName={currentPlayerName}
@@ -303,6 +320,7 @@ export default class GameMatch extends Component {
           countdown: 5,
           counter: 0,
         });
+        this.updateNPCImage(false);
         return this.wait();
       })
       .then(() => {
@@ -340,6 +358,7 @@ export default class GameMatch extends Component {
           countdown: 0,
           counter: '',
         });
+        this.updateNPCImage(true);
       });
   };
 

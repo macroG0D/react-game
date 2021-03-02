@@ -23,8 +23,14 @@
 .current-player-label-wrapper {
   position: absolute;
   left: 50%;
-  top: 30%;
+  top: 28%;
   transform: translateX(-50%);
+  &__title {
+    font-size: 2.5rem;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
 }
 
 .playerWeapons-wrapper {
@@ -94,15 +100,10 @@
   display: flex;
   flex-direction: column;
   pointer-events: none;
-  &__image-wrapper {
-    margin: 0 auto;
-    width: 50%;
-    height: 50%;
-    margin-bottom: 3rem;
-  }
   &__image {
     width: 100%;
-    margin: 1rem -1rem;
+    max-width: 10rem;
+    margin: 1rem 0;
     user-select: none;
     border-radius: 100%;
     border: 0.5rem solid $secondary-color;
