@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Player from '../../player/player';
+import ShowMovesHistory from './showMovesHistory';
 
 import { WEAPONS, getWeaponImage, usersDB } from '../../../../static/global';
 
@@ -11,7 +12,7 @@ import './game-match.scss';
 export default class GameMatch extends Component {
   constructor() {
     super();
-    this.totalPlayers = 6;
+    this.totalPlayers = 5;
     this.realPlayersCount = 1;
     this.status = {
       isStarted: false,
@@ -26,6 +27,9 @@ export default class GameMatch extends Component {
     countdown: null,
     counter: null,
     defeatedPlayers: [],
+    matchHistory: [],
+    players: [],
+    round: 0,
   };
 
   setCurrentPlayerName = () => {
@@ -39,10 +43,9 @@ export default class GameMatch extends Component {
     this.setCurrentPlayerName();
     if (!status.isStarted) {
       // if started === true check in LS
-      this.isStarted = true;
+      status.isStarted = true;
       this.createPlayers();
     }
-    return this.updateGameTable();
   };
 
   generateUsersList = (totalPlayersCount) => {
@@ -65,6 +68,7 @@ export default class GameMatch extends Component {
 
   currentPlayerObject = () => {
     return {
+      players: [],
       name: this.props.currentPlayerName,
       pic: undefined,
       isNPC: false,
@@ -84,10 +88,27 @@ export default class GameMatch extends Component {
     return (
       <div key={name} id={name} className="opponent-card">
         <h3>{name}</h3>
-        <img className="opponent-card__image" src={pic} alt="opponent"></img>
-        {/* <div className="moves-history">{this.updatePlayerMoves()}</div> */}
+        <div className="opponent-card__image-wrapper">
+          <img className="opponent-card__image" src={pic} alt="opponent"></img>
+        </div>
+
+        <div className="moves-history">
+          <ShowMovesHistory
+            playerName={name}
+            playerMoves={this.getPlayerMoves(name)}
+          />
+        </div>
       </div>
     );
+  };
+
+  getPlayerMoves = (name) => {
+    if (this.status.isStarted && this.state.players.length > 0) {
+      const playerID = this.state.players.findIndex(
+        (player) => player.name === name
+      );
+      return playerID > -1 ? this.state.players[playerID].movesHistory : false;
+    }
   };
 
   setPlayerWeapons = () => {
@@ -117,7 +138,6 @@ export default class GameMatch extends Component {
     const usedWeapon = WEAPONS.find((weapon) => weapon.title === weaponTitle);
     const currentPlayer = this.players.find((player) => player.isCurrentPlayer);
     if (!currentPlayer.didLastMove && !currentPlayer.isDead) {
-
       // cant make many moves in one turn
       currentPlayer.didLastMove = true;
       currentPlayer.updateHistory(usedWeapon);
@@ -133,6 +153,10 @@ export default class GameMatch extends Component {
   };
 
   checkSetResults = () => {
+    let currentRound = this.state.round;
+    this.setState({
+      round: (currentRound += 1),
+    });
     const newDefeatedPlayers = [];
 
     const activePlayers = this.players.filter((player) => !player.isDead);
@@ -169,7 +193,7 @@ export default class GameMatch extends Component {
     if (stillAlive.length === 0) {
       // if no survivals
       this.setState({
-        lastRoundResults: 'Every body is dead, start over',
+        lastRoundResults: 'Draw, start over',
       });
       this.players.forEach((player) => {
         if (player.didLastMove) {
@@ -181,7 +205,7 @@ export default class GameMatch extends Component {
     } else if (stillAlive.length > 1) {
       this.updateDefeatedPlayersList(newDefeatedPlayers);
       this.setState({
-        lastRoundResults: 'No winner yet, start over',
+        lastRoundResults: 'New round',
       });
       stillAlive.forEach((player) => {
         player.didLastMove = false;
@@ -190,16 +214,22 @@ export default class GameMatch extends Component {
     } else {
       this.updateDefeatedPlayersList(newDefeatedPlayers);
       this.setState({
-        lastRoundResults: `${stillAlive[0].name} is won!`,
+        lastRoundResults: `${stillAlive[0].name} won!`,
         gameFinished: true,
       });
     }
+
     if (!this.state.gameFinished) {
       const userCards = document.querySelectorAll('.weapon-card');
       userCards.forEach((userCard) => {
         userCard.classList.remove('not-active');
       });
     }
+
+    this.setState({
+      players: this.players,
+    });
+
     this.checkAsDefeated();
   };
 
@@ -234,11 +264,18 @@ export default class GameMatch extends Component {
   };
 
   setCurrentPlayerOnTable = () => {
+    const { currentPlayerName } = this.state;
     return (
       <div className="game-match__table">
         <div className="playerWeapons-wrapper">{this.setPlayerWeapons()}</div>
         <div className="current-player-label-wrapper">
-          <h1>{this.state.currentPlayerName}</h1>
+          <h1>{currentPlayerName}</h1>
+          <div className="moves-history">
+            <ShowMovesHistory
+              playerName={currentPlayerName}
+              playerMoves={this.getPlayerMoves(currentPlayerName)}
+            />
+          </div>
         </div>
       </div>
     );
@@ -253,8 +290,6 @@ export default class GameMatch extends Component {
     });
   };
 
-  updateGameTable = () => {};
-
   componentDidMount() {
     this.setCurrentPlayerName();
     this.newGame();
@@ -262,7 +297,6 @@ export default class GameMatch extends Component {
   }
 
   startNewSet = () => {
-    this.npcsMakeMove();
     this.wait(2000)
       .then(() => {
         this.setState({
@@ -300,6 +334,7 @@ export default class GameMatch extends Component {
         return this.wait();
       })
       .then(() => {
+        this.npcsMakeMove();
         this.checkSetResults();
         this.setState({
           countdown: 0,
@@ -332,6 +367,13 @@ export default class GameMatch extends Component {
   render() {
     return (
       <div className="game-match">
+        <div className="round-number">
+          <span className="round-number__label">round:</span>
+          {this.state.round}
+        </div>
+        <div className="ingame-burger-wrapper" onClick={() => console.log('game menu')}>
+        <div className="ingame-burger"></div>
+        </div>
         <div className="opponents">{this.setOpponentsOnTable()}</div>
         <div className="countdown-wrapper">
           <span className="countdown-wrapper__counter">

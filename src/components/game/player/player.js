@@ -17,10 +17,6 @@ export default class Player {
     this.updateHistory(WEAPONS[randomPick]);
   };
 
-  updateName = () => {};
-
-  updatePic = () => {};
-
   updateHistory = (move) => {
     this.movesHistory.push(move);
   };
