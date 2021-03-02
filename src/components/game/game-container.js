@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { SAFEZONE } from '../../static/global';
 import MainMenu from './scenes/main-menu';
 import GameMatch from './scenes/game-match';
+import GameSounds from './audio/audio';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
@@ -60,6 +61,7 @@ export default class GameContainer extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', () => this.updateCanvasSize());
+    GameSounds.backgroundMusic();
   }
 
   render() {

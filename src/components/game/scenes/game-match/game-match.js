@@ -24,6 +24,7 @@ export default class GameMatch extends Component {
   }
 
   state = {
+    gameActive: false,
     currentPlayerName: null,
     countdown: null,
     counter: null,
@@ -46,6 +47,17 @@ export default class GameMatch extends Component {
       // if started === true check in LS
       status.isStarted = true;
       this.createPlayers();
+    } else {
+      this.setState({
+        gameActive: false,
+        currentPlayerName: null,
+        countdown: null,
+        counter: null,
+        defeatedPlayers: [],
+        matchHistory: [],
+        players: [],
+        round: 0,
+      });
     }
   };
 
@@ -129,31 +141,37 @@ export default class GameMatch extends Component {
     });
   };
 
-
   checkIfPlayerIsStillAlive = () => {
-    const {defeatedPlayers} = this.state;
+    const { defeatedPlayers } = this.state;
     return defeatedPlayers.some((player) => {
-      return player.isCurrentPlayer === true});
-  }
+      return player.isCurrentPlayer === true;
+    });
+  };
 
   playerMakeMove = (weaponTitle) => {
-    // if (this.checkIfPlayerIsStillAlive) return;
-    console.log(this.checkIfPlayerIsStillAlive());
     const userCards = document.querySelectorAll('.weapon-card');
-    GameSounds.playSound('did-move');
-    userCards.forEach((userCard) => {
-      if (userCard.id !== weaponTitle) {
-        userCard.classList.add('not-active');
-      }
-    });
+
     const usedWeapon = WEAPONS.find((weapon) => weapon.title === weaponTitle);
-    const currentPlayer = this.players.find((player) => player.isCurrentPlayer);
-    if (!currentPlayer.didLastMove && !currentPlayer.isDead) {
+    const currentPlayer = this.getCurrentPlayer();
+    if (
+      !currentPlayer.didLastMove &&
+      !currentPlayer.isDead &&
+      !currentPlayer.isNPC
+    ) {
       // cant make many moves in one turn
+      GameSounds.playSound('did-move');
       currentPlayer.didLastMove = true;
       currentPlayer.updateHistory(usedWeapon);
+      userCards.forEach((userCard) => {
+        if (userCard.id !== weaponTitle) {
+          userCard.classList.add('not-active');
+        }
+      });
     }
-    return;
+  };
+
+  getCurrentPlayer = () => {
+    return this.players.find((player) => player.isCurrentPlayer);
   };
 
   npcsMakeMove = () => {
@@ -168,7 +186,7 @@ export default class GameMatch extends Component {
     this.setState({
       round: (currentRound += 1),
     });
-    const newDefeatedPlayers = [];
+    const temporaryDefeatedPlayers = [];
 
     const activePlayers = this.players.filter((player) => !player.isDead);
     activePlayers.forEach((player, i) => {
@@ -190,16 +208,16 @@ export default class GameMatch extends Component {
     });
     activePlayers.forEach((player) => {
       if (player.isDead) {
-        newDefeatedPlayers.push(player);
+        temporaryDefeatedPlayers.push(player);
       }
     });
     const stillAlive = activePlayers.filter((player) => {
       return !player.isDead ? player : false;
     });
-    this.roundResult(stillAlive, newDefeatedPlayers);
+    this.roundResult(stillAlive, temporaryDefeatedPlayers);
   };
 
-  roundResult = (stillAlive, newDefeatedPlayers) => {
+  roundResult = (stillAlive, temporaryDefeatedPlayers) => {
     if (stillAlive.length === 0) {
       // if no survivals
       this.setState({
@@ -209,11 +227,13 @@ export default class GameMatch extends Component {
         if (player.didLastMove) {
           player.didLastMove = false;
           player.isDead = false;
+        } else if (!player.didLastMove) {
+          this.updateDefeatedPlayersList([this.getCurrentPlayer()]);
         }
       });
       this.startNewSet();
     } else if (stillAlive.length > 1) {
-      this.updateDefeatedPlayersList(newDefeatedPlayers);
+      this.updateDefeatedPlayersList(temporaryDefeatedPlayers);
       this.setState({
         lastRoundResults: 'New round',
       });
@@ -222,7 +242,7 @@ export default class GameMatch extends Component {
       });
       this.startNewSet();
     } else {
-      this.updateDefeatedPlayersList(newDefeatedPlayers);
+      this.updateDefeatedPlayersList(temporaryDefeatedPlayers);
       GameSounds.playSound('win');
       this.setState({
         lastRoundResults: `${stillAlive[0].name} won!`,
@@ -244,10 +264,10 @@ export default class GameMatch extends Component {
     this.checkAsDefeated();
   };
 
-  updateDefeatedPlayersList = (newDefeatedPlayers) => {
+  updateDefeatedPlayersList = (temporaryDefeatedPlayers) => {
     const updatedDefeatedPlayers = [
       ...this.state.defeatedPlayers,
-      ...newDefeatedPlayers,
+      ...temporaryDefeatedPlayers,
     ];
     this.setState({
       defeatedPlayers: updatedDefeatedPlayers,
@@ -325,10 +345,38 @@ export default class GameMatch extends Component {
     this.setCurrentPlayerName();
     this.newGame();
     this.startNewSet();
+    // const currentPlayerWeaponsCards = document.querySelectorAll('.weapon-card');
+    // currentPlayerWeaponsCards.forEach((weaponCard) => {
+
+    // })
+    this.keyboardControl();
   }
 
+  keyboardControl = () => {
+    window.addEventListener('keydown', (e) => {
+      switch (e.code) {
+        case 'KeyR':
+          this.playerMakeMove('rock');
+          break;
+        case 'KeyP':
+          this.playerMakeMove('paper');
+          break;
+        case 'KeyS':
+          this.playerMakeMove('scissors');
+          break;
+        case 'KeyL':
+          this.playerMakeMove('lizard');
+          break;
+        case 'KeyY':
+          this.playerMakeMove('spock');
+          break;
+        default:
+      }
+    });
+  };
+
   startNewSet = () => {
-    this.wait(2000)
+    this.wait(3000)
       .then(() => {
         GameSounds.playSound('countdown');
         this.setState({
@@ -374,7 +422,9 @@ export default class GameMatch extends Component {
           counter: '',
         });
         this.updateNPCImage(true);
-      });
+      })
+      .then(() => this.wait(2000))
+      .then(() => this.updateNPCImage(true));
   };
 
   wait(ms = 300) {
@@ -398,6 +448,24 @@ export default class GameMatch extends Component {
     return 'Prepare';
   };
 
+  autoPlay = (e) => {
+    const autoPlayBtn = e.target;
+    const currentPlayer = this.getCurrentPlayer();
+    autoPlayBtn.classList.toggle('btn-activated');
+    const playerTable = document.querySelector('.game-match__table');
+    if (!currentPlayer.isNPC) {
+      currentPlayer.isNPC = true;
+      playerTable.style.pointerEvents = 'none';
+    } else {
+      currentPlayer.isNPC = false;
+      playerTable.style.pointerEvents = 'initial';
+    }
+  };
+
+  restartGame = (e) => {
+    this.newGame();
+  };
+
   render() {
     return (
       <div className="game-match">
@@ -419,6 +487,12 @@ export default class GameMatch extends Component {
           <div className="countdown-wrapper__text-label">
             {this.counterWeaponsName()}
           </div>
+        </div>
+        <div className="btn btn__restart" onClick={(e) => this.restartGame(e)}>
+          restart
+        </div>
+        <div className="btn btn__autoplay" onClick={(e) => this.autoPlay(e)}>
+          autoplay
         </div>
         {this.setCurrentPlayerOnTable()}
       </div>
