@@ -4,6 +4,7 @@ import Player from '../../player/player';
 import ShowMovesHistory from './showMovesHistory';
 
 import { WEAPONS, getWeaponImage, usersDB } from '../../../../static/global';
+import GameSounds from '../../audio/audio';
 
 import profileDefaultPic from '../../../../assets/ingame-assets/profile-pic.svg';
 
@@ -128,8 +129,18 @@ export default class GameMatch extends Component {
     });
   };
 
+
+  checkIfPlayerIsStillAlive = () => {
+    const {defeatedPlayers} = this.state;
+    return defeatedPlayers.some((player) => {
+      return player.isCurrentPlayer === true});
+  }
+
   playerMakeMove = (weaponTitle) => {
+    // if (this.checkIfPlayerIsStillAlive) return;
+    console.log(this.checkIfPlayerIsStillAlive());
     const userCards = document.querySelectorAll('.weapon-card');
+    GameSounds.playSound('did-move');
     userCards.forEach((userCard) => {
       if (userCard.id !== weaponTitle) {
         userCard.classList.add('not-active');
@@ -212,6 +223,7 @@ export default class GameMatch extends Component {
       this.startNewSet();
     } else {
       this.updateDefeatedPlayersList(newDefeatedPlayers);
+      GameSounds.playSound('win');
       this.setState({
         lastRoundResults: `${stillAlive[0].name} won!`,
         gameFinished: true,
@@ -267,8 +279,8 @@ export default class GameMatch extends Component {
         if (player.isCurrentPlayer || player.isDead) return;
         const lastMove = player.movesHistory[player.movesHistory.length - 1];
         opponentsCards[i].src = getWeaponImage(lastMove);
-      }     
-    })
+      }
+    });
   };
 
   showNPCProfileImage = () => {
@@ -277,8 +289,8 @@ export default class GameMatch extends Component {
     this.players.forEach((player, i) => {
       if (player.isCurrentPlayer) return;
       opponentsCards[i].src = player.pic;
-    })
-  }
+    });
+  };
 
   setCurrentPlayerOnTable = () => {
     const { currentPlayerName } = this.state;
@@ -286,7 +298,9 @@ export default class GameMatch extends Component {
       <div className="game-match__table">
         <div className="playerWeapons-wrapper">{this.setPlayerWeapons()}</div>
         <div className="current-player-label-wrapper">
-          <h3 className="current-player-label-wrapper__title">{currentPlayerName}</h3>
+          <h3 className="current-player-label-wrapper__title">
+            {currentPlayerName}
+          </h3>
           <div className="moves-history">
             <ShowMovesHistory
               playerName={currentPlayerName}
@@ -316,6 +330,7 @@ export default class GameMatch extends Component {
   startNewSet = () => {
     this.wait(2000)
       .then(() => {
+        GameSounds.playSound('countdown');
         this.setState({
           countdown: 5,
           counter: 0,
@@ -362,7 +377,7 @@ export default class GameMatch extends Component {
       });
   };
 
-  wait(ms = 500) {
+  wait(ms = 300) {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
@@ -390,8 +405,11 @@ export default class GameMatch extends Component {
           <span className="round-number__label">round:</span>
           {this.state.round}
         </div>
-        <div className="ingame-burger-wrapper" onClick={() => console.log('game menu')}>
-        <div className="ingame-burger"></div>
+        <div
+          className="ingame-burger-wrapper"
+          onClick={() => console.log('game menu')}
+        >
+          <div className="ingame-burger"></div>
         </div>
         <div className="opponents">{this.setOpponentsOnTable()}</div>
         <div className="countdown-wrapper">
