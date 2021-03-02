@@ -286,7 +286,7 @@ export default class GameMatch extends Component {
       <div className="game-match__table">
         <div className="playerWeapons-wrapper">{this.setPlayerWeapons()}</div>
         <div className="current-player-label-wrapper">
-          <h3 class="current-player-label-wrapper__title">{currentPlayerName}</h3>
+          <h3 className="current-player-label-wrapper__title">{currentPlayerName}</h3>
           <div className="moves-history">
             <ShowMovesHistory
               playerName={currentPlayerName}
