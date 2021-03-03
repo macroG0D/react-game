@@ -5,6 +5,12 @@ import Paper from '../assets/ingame-assets/paper.png';
 import Lizard from '../assets/ingame-assets/lizard.png';
 import Spock from '../assets/ingame-assets/spock.png';
 
+import sheldonUserPic from '../assets/users-pics/sheldon.png';
+import leonardUserPic from '../assets/users-pics/leonard.png';
+import rajeshUserPic from '../assets/users-pics/rajesh.png';
+import howardUserPic from '../assets/users-pics/howard.png';
+import pennyUserPic from '../assets/users-pics/penny.png';
+
 export const SAFEZONE = 200;
 
 export const WEAPONS = [
@@ -65,23 +71,23 @@ export const getWeaponImage = (move) => {
 export const usersDB = [
   {
     name: 'Sheldon',
-    pic: undefined,
+    pic: sheldonUserPic,
   },
   {
     name: 'Leonard',
-    pic: undefined,
+    pic: leonardUserPic,
   },
   {
     name: 'Koothrappali',
-    pic: undefined,
+    pic: rajeshUserPic,
   },
   {
     name: 'Howard',
-    pic: undefined,
+    pic: howardUserPic,
   },
   {
     name: 'Penny',
-    pic: undefined,
+    pic: pennyUserPic,
   },
 ];
 
