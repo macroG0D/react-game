@@ -26,6 +26,6 @@ export default class GameSounds {
     bgAudio.loop = true;
     bgAudio.src = backgroundMusic;
     bgAudio.volume = 0.05;
-    bgAudio.play();
+    // bgAudio.play();
   };
 }

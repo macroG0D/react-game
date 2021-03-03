@@ -14,26 +14,18 @@ import './game-match.scss';
 export default class GameMatch extends Component {
   constructor() {
     super();
-    this.uniqeKey = 123;
-    this.totalPlayers = 5;
-    this.realPlayersCount = 1;
-    this.status = {
-      isStarted: false,
-      isFinished: false,
-    };
     this.players = [];
-    this.activePlayers = 0;
   }
 
   state = {
-    gameActive: false,
+    isStarted: false,
     currentPlayerName: null,
-    countdown: null,
-    counter: null,
+    players: [],
     defeatedPlayers: [],
     matchHistory: [],
-    players: [],
     round: 0,
+    countdown: null,
+    counter: null,
   };
 
   setCurrentPlayerName = () => {
@@ -45,17 +37,18 @@ export default class GameMatch extends Component {
   newGame = () => {
     const myStorage = window.localStorage;
     myStorage.setItem('playername', this.currentPlayerName);
-    console.log(myStorage);
 
-    const { status } = this;
+    const { isStarted } = this.state;
     this.setCurrentPlayerName();
-    if (!status.isStarted) {
+    if (!isStarted) {
       // if started === true check in LS
-      status.isStarted = true;
+      this.setState({
+        isStarted: true,
+      });
       this.createPlayers();
     } else {
       this.setState({
-        gameActive: false,
+        isStarted: false,
         currentPlayerName: null,
         countdown: null,
         counter: null,
@@ -67,10 +60,11 @@ export default class GameMatch extends Component {
     }
   };
 
-  generateUsersList = (totalPlayersCount) => {
+  generateUsersList = () => {
+    const { totalPlayers, realPlayers } = this.props;
     const usedIndexes = [];
     const usersList = [];
-    for (let i = 0; i < totalPlayersCount - this.realPlayersCount; i += 1) {
+    for (let i = 0; i < totalPlayers - realPlayers; i += 1) {
       const randomUserIndex = Math.floor(Math.random() * usersDB.length);
       if (usedIndexes.indexOf(randomUserIndex) === -1) {
         usedIndexes.push(randomUserIndex);
@@ -96,7 +90,7 @@ export default class GameMatch extends Component {
   };
 
   createPlayers = () => {
-    const usersList = this.generateUsersList(this.totalPlayers);
+    const usersList = this.generateUsersList();
     usersList.forEach((user) => {
       const { name, pic, isNPC, isCurrentPlayer } = user;
       this.players.push(new Player(name, pic, isNPC, isCurrentPlayer));
@@ -122,11 +116,10 @@ export default class GameMatch extends Component {
   };
 
   getPlayerMoves = (name) => {
-    if (this.status.isStarted && this.state.players.length > 0) {
-      const playerID = this.state.players.findIndex(
-        (player) => player.name === name
-      );
-      return playerID > -1 ? this.state.players[playerID].movesHistory : false;
+    const { isStarted, players } = this.state;
+    if (isStarted && players.length > 0) {
+      const playerID = players.findIndex((player) => player.name === name);
+      return playerID > -1 ? players[playerID].movesHistory : false;
     }
   };
 
@@ -342,7 +335,6 @@ export default class GameMatch extends Component {
     return this.players.map((player) => {
       if (player.isCurrentPlayer) return false;
       if (!player.pic) player.pic = profileDefaultPic;
-      this.activePlayers += 1;
       return this.opponentCard(player);
     });
   };
@@ -431,7 +423,7 @@ export default class GameMatch extends Component {
 
   wait(ms = 300) {
     return new Promise((resolve) => {
-      setTimeout(resolve, ms);
+      this.timeoutid = setTimeout(resolve, ms);
     });
   }
 
@@ -466,7 +458,9 @@ export default class GameMatch extends Component {
 
   restartGame = () => {};
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    clearInterval(this.timeoutid);
+  }
 
   render() {
     return (

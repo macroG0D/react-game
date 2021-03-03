@@ -50,7 +50,7 @@ export default class GameContainer extends Component {
           <Route path="/play" component={MainMenu} exact />
           <Route
             path="/play/newGame"
-            render={() => <GameMatch currentPlayerName="TonYem" />}
+            render={() => <GameMatch currentPlayerName="TonYem" totalPlayers="5" realPlayers="1" />}
             exact
           />
         </Router>
