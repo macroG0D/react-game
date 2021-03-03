@@ -35,9 +35,6 @@ export default class GameMatch extends Component {
   };
 
   newGame = () => {
-    const myStorage = window.localStorage;
-    myStorage.setItem('playername', this.currentPlayerName);
-
     const { isStarted } = this.state;
     this.setCurrentPlayerName();
     if (!isStarted) {
@@ -47,6 +44,7 @@ export default class GameMatch extends Component {
       });
       this.createPlayers();
     } else {
+      const emptyPlayers = [];
       this.setState({
         isStarted: false,
         currentPlayerName: null,
@@ -54,9 +52,10 @@ export default class GameMatch extends Component {
         counter: null,
         defeatedPlayers: [],
         matchHistory: [],
-        players: [],
+        players: emptyPlayers,
         round: 0,
       });
+      console.log(this.state.players);
     }
   };
 
@@ -158,7 +157,7 @@ export default class GameMatch extends Component {
       !currentPlayer.isNPC
     ) {
       // cant make many moves in one turn
-      GameSounds.playSound('did-move');
+      GameSounds.playSound('did-move', this.props.soundsOn);
       currentPlayer.didLastMove = true;
       currentPlayer.updateHistory(usedWeapon);
       userCards.forEach((userCard) => {
@@ -242,7 +241,7 @@ export default class GameMatch extends Component {
       this.startNewSet();
     } else {
       this.updateDefeatedPlayersList(temporaryDefeatedPlayers);
-      GameSounds.playSound('win');
+      GameSounds.playSound('win', this.props.soundsOn);
       this.setState({
         lastRoundResults: `${stillAlive[0].name} won!`,
         gameFinished: true,
@@ -343,36 +342,35 @@ export default class GameMatch extends Component {
     this.setCurrentPlayerName();
     this.newGame();
     this.startNewSet();
-    this.keyboardControl();
+    window.addEventListener('keydown', (e) => this.keyboardControl(e));
   }
 
-  keyboardControl = () => {
-    window.addEventListener('keydown', (e) => {
-      switch (e.code) {
-        case 'KeyR':
-          this.playerMakeMove('rock');
-          break;
-        case 'KeyP':
-          this.playerMakeMove('paper');
-          break;
-        case 'KeyS':
-          this.playerMakeMove('scissors');
-          break;
-        case 'KeyL':
-          this.playerMakeMove('lizard');
-          break;
-        case 'KeyY':
-          this.playerMakeMove('spock');
-          break;
-        default:
-      }
-    });
+  keyboardControl = (e) => {
+    switch (e.code) {
+      case 'KeyR':
+        this.playerMakeMove('rock');
+        break;
+      case 'KeyP':
+        this.playerMakeMove('paper');
+        break;
+      case 'KeyS':
+        this.playerMakeMove('scissors');
+        break;
+      case 'KeyL':
+        this.playerMakeMove('lizard');
+        break;
+      case 'KeyY':
+        this.playerMakeMove('spock');
+        break;
+      default:
+    }
   };
 
   startNewSet = () => {
+    const { soundsOn } = this.props;
     this.wait(3000)
       .then(() => {
-        GameSounds.playSound('countdown');
+        GameSounds.countDownSound('rock', soundsOn);
         this.setState({
           countdown: 5,
           counter: 0,
@@ -381,6 +379,7 @@ export default class GameMatch extends Component {
         return this.wait();
       })
       .then(() => {
+        GameSounds.countDownSound('paper', soundsOn);
         this.setState({
           countdown: 4,
           counter: 1,
@@ -388,6 +387,7 @@ export default class GameMatch extends Component {
         return this.wait();
       })
       .then(() => {
+        GameSounds.countDownSound('schissors', soundsOn);
         this.setState({
           countdown: 3,
           counter: 2,
@@ -395,6 +395,7 @@ export default class GameMatch extends Component {
         return this.wait();
       })
       .then(() => {
+        GameSounds.countDownSound('lizard', soundsOn);
         this.setState({
           countdown: 2,
           counter: 3,
@@ -402,6 +403,7 @@ export default class GameMatch extends Component {
         return this.wait();
       })
       .then(() => {
+        GameSounds.countDownSound('spock', soundsOn);
         this.setState({
           countdown: 1,
           counter: 4,
@@ -456,9 +458,8 @@ export default class GameMatch extends Component {
     }
   };
 
-  restartGame = () => {};
-
   componentWillUnmount() {
+    window.removeEventListener('keydown', (e) => this.keyboardControl(e));
     clearInterval(this.timeoutid);
   }
 
@@ -486,9 +487,9 @@ export default class GameMatch extends Component {
             {this.counterWeaponsName()}
           </div>
         </div>
-        <div className="btn btn__restart" onClick={this.restartGame}>
+        {/* <div className="btn btn__restart" onClick={this.newGame}>
           restart
-        </div>
+        </div> */}
         <div className="btn btn__autoplay" onClick={(e) => this.autoPlay(e)}>
           autoplay
         </div>
