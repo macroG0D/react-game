@@ -55,7 +55,6 @@ export default class GameMatch extends Component {
         players: emptyPlayers,
         round: 0,
       });
-      console.log(this.state.players);
     }
   };
 
@@ -473,7 +472,6 @@ export default class GameMatch extends Component {
         <Link to="/play">
           <div
             className="ingame-burger-wrapper"
-            onClick={() => console.log('game menu')}
           >
             <div className="ingame-burger"></div>
           </div>

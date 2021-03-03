@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
 import './settings.scss';
 
 export default class Settings extends Component {
@@ -53,7 +55,6 @@ export default class Settings extends Component {
       currentSettingsState = this.props.currentSettingsState;
     }
     const { players, music, sounds } = currentSettingsState;
-    console.log(players, music, sounds);
     this.setState({
       opponentsNumber: +players -1,
       sounds: sounds,
@@ -64,6 +65,10 @@ export default class Settings extends Component {
   componentDidMount = () => {
     this.setDefaultValues();
   };
+
+  refreshPage = () =>{
+    window.location.replace('/play');
+ }
 
   render() {
     const { opponentsNumber, music, sounds } = this.state;
@@ -125,6 +130,7 @@ export default class Settings extends Component {
           <hr></hr>
 
           <button className="btn-reset-score">Reset score table</button>
+          <button onClick={this.refreshPage} className="submit-back">Back</button>
         </div>
       </div>
     );
