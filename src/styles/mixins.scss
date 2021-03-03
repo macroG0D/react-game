@@ -1,0 +1,15 @@
+@mixin mainFont($fw: 400) {
+  font-family: 'IBM Plex Sans', 'Roboto', 'Arial', sans-serif;
+  font-weight: $fw; // 500 / 700
+}
+
+@mixin flexContainer($flex-dir: row, $align: center, $jc: space-between) {
+  display: flex;
+  align-items: $align;
+  flex-direction: $flex-dir;
+  justify-content: $jc;
+}
+
+@mixin mt($speed: 0.25s, $easing: ease) {
+  transition: all $speed $easing;
+}

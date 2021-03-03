@@ -1,0 +1,48 @@
+@import '../../styles/vars.scss';
+@import '../../styles/mixins.scss';
+
+.footer {
+  font-size: 1.4rem;
+  @include flexContainer;
+  min-height: 9rem;
+  background: $secondary-color;
+  color: $accent-color;
+  padding: 0 2rem;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  a {
+    color: $accent-color;
+    font-weight: 500;
+    text-decoration: underline;
+    margin: 0 0 0 0.3rem;
+  }
+  &__info {
+    width: 20%;
+    min-width: 20rem;
+  }
+  :last-child {
+    text-align: right;
+  }
+  @media (max-width: 580px) {
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0;
+    &__info {
+      width: 100%;
+      text-align: center;
+    }
+    :last-child {
+      text-align: center;
+    }
+  }
+}
+
+.logo-secondary {
+  @include flexContainer;
+  :last-child {
+    margin: 0 0.5rem;
+  }
+}

@@ -1,0 +1,7 @@
+@import '../../styles/vars.scss';
+@import '../../styles/mixins.scss';
+
+.app {
+  height: 100vh;
+  @include flexContainer(column, stretch);
+}

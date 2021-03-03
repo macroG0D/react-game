@@ -1,0 +1,59 @@
+@import '../../../../styles/vars.scss';
+@import '../../../../styles/mixins.scss';
+
+.global-settings-wrapper {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.btn-reset-score {
+  width: 30rem;
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  font-weight: 600;
+  outline: none;
+  background: none;
+  color: $secondary-color;
+  border: none;
+  border: 1px solid $secondary-color;
+  border-radius: 1rem;
+  @include mt();
+  cursor: pointer;
+  &__restart {
+    right: 1rem;
+  }
+  &__autoplay {
+    left: 1rem;
+  }
+  &:hover {
+    border-color: #FC3B3B;
+    background-color: #FC3B3B;
+    box-shadow: 0px 0px 30px rgba(252, 59, 59, 0.5);
+  }
+}
+
+.wrong {
+  border: 1px solid red;
+}
+
+hr {
+  width: 100%;
+  margin: 2rem;
+}
+
+.settings-label {
+  font-size: 2rem;
+  margin: 0.5rem 1rem;
+}

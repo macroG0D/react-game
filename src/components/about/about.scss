@@ -1,0 +1,59 @@
+@import '../../styles/vars.scss';
+@import '../../styles/mixins.scss';
+
+.rules-text {
+  font-size: 2.4rem;
+}
+
+.rules-text-wrapper {
+  margin-top: 3rem;
+}
+
+.about {
+  display: flex;
+  flex-wrap: wrap-reverse;
+ }
+
+.left-half {
+  width: 50%;
+  min-width: 25rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto;
+  h2 {
+    padding-right: 2rem;
+  }
+}
+
+.right-half {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 50%;
+  min-width: 25rem;
+  position: relative;
+  margin: 0 auto 3rem;
+}
+
+.videoPlayer {
+  border: none;
+  max-width: 100%;
+}
+
+.descr-wrapper {
+  text-align: right;
+  margin-top: 1rem;
+  &__bold {
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+  &__regular {
+    font-size: 1.2rem;
+  }
+}
+
+.game-rules-pic {
+  margin: 0;
+  align-self: flex-start;
+}
